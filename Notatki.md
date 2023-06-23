@@ -146,4 +146,25 @@ class foo{
 
 - zwykła funkcja w klasnie zawiera niewidoczny wskaźnik *this, który informuje ją dla jakiego obiektu danej klasy ma być wywołana dana funkcja
 - funkcja statyczna tego wskaźnika nie posiada, dlatego może się odwoływać jedynie do zmiennych statycznych
-- 
+
+# 2.Obiektowe Projektowanie aplikacji
+
+## Metoda kart CRC
+
+- Class-Responsibilities-Collaborators (klasy-obowiązki-współpracownicy)
+- Polega na stworzeniu tabelki podczas rozważania problemu:
+
+  |                                	| Class 	|                                                                   	|
+  |--------------------------------	|:-----:	|------------------------------------------------------------------:	|
+  | Responsibilities               	|       	|                                                     collaborators 	|
+  | -co musi wiedzieć              	|       	|                                          z kim klasa współpracuje 	|
+  | jakie operacje musi umożliwiać 	|       	| lepiej wpisać z jakimi obiektami innych klas musimy współpracować 	|
+
+## Derektywy ifndef,define
+- derektywy, które służą do zabezpieczenia, przed wielokrotnym dołączeniem tego samego pliku nagłówkowego
+- Przykład:
+````c++
+#ifndef CPP_2023_W_03_BOARD_H
+#define CPP_2023_W_03_BOARD_H
+````
+
