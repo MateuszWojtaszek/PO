@@ -102,3 +102,48 @@ puszka::puszka("Bączek", 500);
 
 
 ````
+## Dodatkowe uwagi do konstruktorów
+
+- jeśli nie stworzymy ręcznie własnego wygeneruje się domyślny konstruktor który nic nie robi.
+
+- nie ma problemu z tworzeniem tablicy obkietów danej klasy przy użyciu domyślnego konstruktora
+
+- NATOMIAST JEŚLI NIE ISTNIEJE DOOMYŚLNY KONSTRUKTOR LUB BEZARGUMNTOWY to stworzenie tablicy spowoduję błąd!.
+- mamy 2 opcje : zainicjować każdy obiekt - podac ich argumenty przy inicjacji; stworzyc konstruktor bezargumentowy; rezygnowac z tablic i robic wektor ktory bedzie rozszerzany przy tworzeniu obiektu
+
+## DESTRUKTORY
+
+- nie niszczy obiektu tylko jest automatycznie wywolanu tuż przed jego zniszczeniem
+- jego zadaniem jest posprzątanie po projekcie (rzadko się je pisze np. przy tablicach dynamicznych)
+- Tworzenie: ~Nazwa(); Nazwa::~Nazwa()
+- Moze być tylko 1
+- nie ma typu
+- nie mozna go wywołać z parametrami 
+- Destruktory wywołują się od końca 
+
+## Składowe statyczne wewnątrz klasy
+
+- jest to wspólne dla wszystkich obiektów tego typu (w pamięci alokowane tylko raz)
+- przyklad stosowania: ilość stworzonych obiektów
+- typ static  musi zostac zdefiniowany, robimy to tak:
+````c++
+<góra pliku.cpp>
+int foo::counter; // deklaracja
+.
+.
+.
+<plik.h>
+class foo{
+    static int counter; //inicjacja
+};
+````
+- zmienne statyczne są tak naprawde globalne ale dostosowane do danej klasy
+- można się do niej odwołać bez tworzenia obiektu wykorzystując nazwe klasy: Nazwa::counter
+- to u góry dziala tylko jak zmienna jest publiczna
+- jeśli jest ona prywatna mozemy stworzyc publiczna funkcje satyczną która będzie zwracać nam zmienną.
+
+### Funkcja statyczna a zwykła
+
+- zwykła funkcja w klasnie zawiera niewidoczny wskaźnik *this, który informuje ją dla jakiego obiektu danej klasy ma być wywołana dana funkcja
+- funkcja statyczna tego wskaźnika nie posiada, dlatego może się odwoływać jedynie do zmiennych statycznych
+- 
