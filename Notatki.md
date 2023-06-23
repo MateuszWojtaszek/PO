@@ -70,6 +70,11 @@ public:
 };
 // jeśli mamy konstruktor, który można wywołać z jednym parametrem
 // to należy przed nim dopisać explicit
+// konstruktor który można wywołać z jednym parametrem odrazu 
+// pozwala na przekonwertowanie dowolnego typu 
+// na typ klasy(dziala jako operator konwersji) 
+// (moze to prowadzic do błędów lub kontrowersji)
+// dodanie explicit wyłącza niejawną konwersje co zapobiega błędą
 explicit puszka(const std::string &type, int volume=500)
 
 ````
