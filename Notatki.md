@@ -1,4 +1,4 @@
-# Podstawy
+# Programowanie Obiektowe
 ## 1.Podstawowe pojęcia związane z programowaniem obiektowym
 ### Obiekt i klasa
 
