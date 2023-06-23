@@ -168,3 +168,34 @@ class foo{
 #define CPP_2023_W_03_BOARD_H
 ````
 
+## Referencje
+- jeśli chcemy przekazać orginalny obiekt do naszej klasy to musimy mieć 2 rzeczy:
+````c++
+//pierwsza to zmienna która przechowa referencje,bo gdyby jej nie bylo to wartość zostałaby skopiowana
+Board & board;
+public:
+    //posiadać konstruktor, który jako argument przyjmnie referencje na obiekt
+    Player(const std::string &n, Board &b);
+    // w przypadku const referencji deklarujemy, że nie zmienimy orginału
+````
+## Kolejność inicjalizacji w licie inicjalizacyjnej
+- koljeność jest taka sama jak przy deklaracji zmiennych w klasie.
+- Czyli przykładowo powinno to wyglądać następująco
+```c++
+//mamy kalse
+class foo(){
+    //mamy zmienne
+    const std::string &name;
+    Board & board;
+public:
+    //Mamy konstruktor z listą inicjalizacyjną
+    foo(const std::string &n,Board &b): name(n),board(b);
+    
+} 
+
+```
+
+## Przykład testowania Funkcji
+
+- stworzenie pliku z assertami które testują nasz kod i przy urzyciu cmake sprawdzać poprawność testów przy każdej kompilacji
+
