@@ -274,3 +274,103 @@ c1=10; //zadziala tylko bez explicit
 c1=static_cast<Complex>(10) // zadziała z explicit
 ```
 - Complex --> T
+```c++
+double operator double()const{
+    //cos np modół liczby zespolonej xd
+} 
+```
+- Uwaga! przy kilku operatorów konwersji kompilator może mieć problem ze stwierdzeniem jakiego operatora użyć.
+- Trzeba wtedy ustawiać konwersje ręcznie
+
+# Dziedziczenie
+- Jeśli chcemy wykorzystać częściową impementacje z innej klasy to możemy zrobić, że nasza nowa klasa bazuje na istniejącej klasie 
+```c++
+class Osoba{
+    std::string imie;
+public:
+    explicit Osoba(const std::string &im)
+    void info() const;
+};
+
+Osoba::Osoba(const std::string &im): imie{im}{}
+
+.
+.
+.
+//     typ dziedziczenia
+class Student: public Osoba{
+    int indeks;
+    // nie powtarzamy zmiennych
+public:
+    // klasie pochodnej mozemy nadpisac odziedziczoną funkcje z klasy bazowej 
+    void info() const; // -> nadpisana funkcja musi miec tą samą sygnature
+    
+};
+.
+.
+.
+// konstruktor klasy która dziedziczy najpierw wywołuje konstruktor klasy bazowej
+Student::Student(const std::string &im ,int id):Osoba(im), indeks(id){
+    
+}
+```
+- Czego nie dziedziczymy?
+- Konstruktorów, destruktory, operator przypisania 
+- To że cos jest dziedziczone nie oznacza ze odrazu mamy do tego dostęp!
+- Typy dziedziczenia
+- public -> public na public, protected na protected, privet na privet 
+- protected -> public na protected, protected na protected, privet na privet
+- privet -> wszystko na privet
+- Czyli w skrócie dziedziczenie nie daje nam dostepu do zmiennych privet, jedynie do public i protected
+- Protected:
+- mają do niej dostęp tylko metody klasy oraz pochdne z tej klasy
+```c++
+//przydanty sposób wykorzystywania funkcji z kalsy bazowej w klasie pochodnej
+Osoba::info(); //-> metoda z klasy bazowej
+info(); //-> metoda z klasy pochodnej
+```
+## Kiedy używać dziedziczenia?
+
+- podczas projektowania, miedzy rzeczami występują relacje:
+- silnik i samochód -> sammochód "Posiada" silnik(<b>has a</b>)
+- Osoba i Student -> szczególny typ osoby (<b>is a</b>)
+- Samochód i Parking -> Parking "posiada samochód"(<b>has a</b>)
+- Prostokąt i kwadrad -> szczególny typ prostokąta (<b>is a</b>)
+- Jeśli zachodzi relacja <b>HAS A</b> dziedziczenie jest wykluczone !
+- Jeśli zachodzi relacja <b>IS A</b> można pomyśleć nad dziedziczeniem
+
+## UML - Język modelowania
+- wykorzystywany do projektowania programów
+<img src="_001">
+- extend -> dziedziczenie
+- asosjacja -> korzystanie np.: wartość referencja
+- Agregacja -> pole które będzie właścicielem danego obiektu
+- kompozycja -> to samo co agregacja ale czas "zycia" obiektów jest współdzielony
+
+## Relacja Baza - Pochadna
+```c++
+Ososba o{"Jan"};
+Student s{"Anna",123456};
+//która opcja jest legalna?
+o=s; // legalne
+s=o // ERROR
+```
+- Czemu? Ponieważ podczas wywoływania opcji 1 kompilator obetnie sobię wszystko co nie należy do osoby 
+i przypisze osobie wartości osoby z pochodnej student.
+- W opcji drugiej, kompilator nie dostaje wszystkich danych od osobydo przypisania wartości dla studenta
+np. jego nr. indeksu
+- w skrócie, każdy student jest osobą czyli możemy ze studenta zrobić osobę,
+a nie z każdej osoby można zrobic studenta 
+## Przykład zastosowania tej relacji
+```c++
+void foo(Osoba o){
+    o.info;
+}
+.
+.
+.
+foo(o);
+foo(s);
+// wywołamy metodę z klasy bazowej dla osoby i studenta
+// Uwaga - nie użyjemy nadpisanej funkcji przez klase studnet
+```
