@@ -199,3 +199,78 @@ public:
 
 - stworzenie pliku z assertami które testują nasz kod i przy urzyciu cmake sprawdzać poprawność testów przy każdej kompilacji
 
+# Przeciążanie Operatorów.
+
+- W c++ można zdefiniować nowe znaczenie dla operatorów. Istnieją jednak ograniczenia:
+- tylko istniejące operatory, nie można zmieniać ich właściwości czyli priorytetu, łączności i liczbę argumentów.
+- nie każdy operator można przeciążyć np.:
+- . (dostęp do składowej klasy/struktury)
+- ::
+- sizeof
+- ?:
+- .*
+- Wiekszość operatorów można przeciążać na 2 sposoby:
+- zwykła funkcja
+- funkcja składowa (wywoływana dla konkretnego obiektu)
+
+Jak przeciążyć operatory?
+```c++
+//jako funkcja  globalna
+// c3 * 10
+// trzeba ją w klasie zrobić friend
+Complex operator*(const Complex &larg, double rarg ){
+    Complex rv = larg;
+    rv.re = larg.re * rarg;
+    rv.im = larg.im * rarg;
+    return rv;
+}
+.
+.
+.
+//wewnątrz klasy
+
+friend Complex operator*(const Complex &larg, double rarg );
+.
+.
+.
+//jako funkcja składowa
+// c2.operator+(c3)
+Complex operator+ (const Complex &arg) const;
+// pierwszy const mówi że nie zmieniamy prawego argumentu a drugi że lewego
+// zwracamy obiekt typu Complex
+.
+.
+.
+//przykładowa definicja
+Complex Complex:: operator+ (const Complex &arg) const{
+    Complex tmp_c;
+    tmp_c.re=this->re + arg.re;
+    tmp_c.im = im + arg.im;
+    return tmp_c;
+}
+```
+## Przykład z std::cout
+
+```c++
+// jeśli chcielibyśmy przciążyć ten operator jako funkcje składową,
+// czego nie powinno się robić, musielibyśmy ingerować w klase std::cout
+// czyli wybieramy opcje globalną, w ostream nie dajemy const bo modyfikujemy strumien
+// zwracamy obiekt przez referencje ponieważ chcemy zwrócić konkrety dany strumień który użyliśmy
+// czyli do referencji w zwracaniu używamy gdy chcemu zwrócić już istniejący obiekt
+std::ostream &operator<<(std::ostream &str,const Complex &c){
+    str<<c.re<<"+"<<c.im<<"i";
+}
+
+```
+
+## Operator konwersji
+
+- w przypadku operatorów konwersji mamy 2 możliwości:
+- Jakis typ T --> Complex // konstruktor bez explicit
+
+bądź jeśli mamy konstruktor z explicit to możemy to przekonwertować w sposób jawny
+```c++
+c1=10; //zadziala tylko bez explicit
+c1=static_cast<Complex>(10) // zadziała z explicit
+```
+- Complex --> T
