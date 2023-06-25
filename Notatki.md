@@ -646,8 +646,24 @@ class Interface{
 - Elementy są umieszczone losowo w pamięci 
 - Dostęp do elementu ```lst[i]``` jest operacją o złożoności O(n)
 - łatwo dodać lub usunąć element w każdym miejscu - O(1) (ale...jeśli mamy wskaźnik/iterator na konkretne miejsce w liście!)
-- 
+#### std::set
+- Dany element może występować tylko raz
+- służy do sprawdzenia czy coś występuje w zbiorze;
+#### std::map
+- Reprezentuje tablice gdzie kluczem jest dowolny typ
+- odpowiednik dictionary z pythona
 
+### ITERATOR
+- potrafią poruszać się po kolekcji
+- pozwalają nam dobrać się do zawartości kolekcji na który wskazują
+- mozna je przypisac,inkrementować
+Kategorie iteratorów:
+- iteratory wejściowe -> można wykonać dereferencje w kontekcie r-value. przykład: cout<<*a.
+- iteratory wyjściowe -> dereferencja w kontekscie l-value. przykład: *a=9;
+- forward -> wejsciowe + wyjsciowe + posiadają domyślny konstruktor oraz posiadają tzw. "multipass"
+- Biderectional(dwukierunkowy) -> forward+możliwość dekrementacji
+- Random Access Iterator -> wszystko poprzednie + mozna do iteratora a: a+n,a-n, a<n, a>n, a[n]
+- 
 ##### Złożoność
 - O(1) - czas działania nie zależy od rozmiaru problemu
 - O(n) - czas działania jest liniowo zależny od rozmiaru problemu
@@ -656,3 +672,16 @@ class Interface{
 - O(ln n)
 - O(n*ln n)
 - O(2^n)
+### Algorytmy w STL
+Aby korzystać trzeba załączyć derektywy
+```c++
+#include <algorithm>
+#include <numeric>
+```
+Algorytmy nie modyfikujące kontenera:
+
+std::all_of() -> czy wszystkie elementy kolekcji spełniają warunek
+
+std::any_of() -> czy w kolekcji cokolwiek spełnia warunek
+
+std::none_of() -> czy żaden element kolekcji nie spełnia warunku
