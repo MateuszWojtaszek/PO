@@ -778,3 +778,190 @@ jeśli taki wyjątek zostanie zgłoszony w trakcje zgloszenia innego wyjątku to
 ```c++
 void foo() noexcept;  
 ```
+## Zarządzanie Pamięcią
+Co to wyciek pamięci?
+- to utworzenie jakiegoś obiektu, któremu przypiszemy pamięć dynamicznie a natępnie usuniemy ten obiekt bez zwolnienia pamięci
+### Dynamiczna pamięć
+- Pozwala to na elastyczne zarządzanie pamięcią i dynamiczne tworzenie obiektów lub tablic o zmiennej wielkości.
+- Alokacja dynamicznej pamięci odbywa się za pomocą operatora new. Może być używany do alokowania pojedynczego obiektu lub tablicy obiektów. Przykładem użycia operatora new do alokacji pojedynczego obiektu może być:
+```c++
+ int* dynamicInt = new int;
+```
+-W powyższym przykładzie została zaalokowana dynamiczna pamięć dla zmiennej typu int. Operator new zwraca wskaźnik do zaalokowanej pamięci, który można przypisać do odpowiedniego wskaźnika. 
+- W przypadku alokacji tablicy, operator new jest używany wraz z deklaracją typu i rozmiarem tablicy, na przykład:
+```c++
+int size = 5;
+int* dynamicArray = new int[size];
+```
+-Powyższy kod alokuje dynamicznie tablicę dynamicArray o rozmiarze 5.
+
+Po zakończeniu korzystania z dynamicznie zaalokowanej pamięci, należy ją zwolnić, aby uniknąć wycieków pamięci. Do zwalniania dynamicznej pamięci służy operator delete dla pojedynczego obiektu lub operator delete[] dla tablicy. Przykładem użycia operatora delete dla pojedynczego obiektu jest:
+```c++
+delete dynamicInt;
+```
+W przypadku tablicy dynamicznie zaalokowanej, używamy operatora delete[], na przykład:
+```c++
+delete[] dynamicArray;
+```
+### Konstruktor kopiujący
+Konstruktor kopiujący w języku C++ jest specjalną funkcją składową klasy, która jest wywoływana podczas tworzenia nowego obiektu na podstawie istniejącego obiektu tego samego typu.Konstruktor kopiujący ma specyficzną sygnaturę, która wygląda następująco:
+```c++
+NazwaKlasy(const NazwaKlasy& obiektZrodlowy)
+
+```
+Przykład definicji konstruktora kopiującego dla klasy MojObiekt może wyglądać tak:
+```c++
+class MojObiekt {
+public:
+    int wartość;
+
+    // Konstruktor kopiujący
+    MojObiekt(const MojObiekt& obiektZrodlowy) {
+        wartość = obiektZrodlowy.wartość;
+    }
+    // MojObiekt(const MojObiekt& obiektZrodlowy)=delete 
+    // jesli tak zrobimy to zabraniamy kopiwoania
+};
+
+```
+W powyższym przykładzie konstruktor kopiujący klasy MojObiekt tworzy nowy obiekt na podstawie obiektu źródłowego obiektZrodlowy. W tym przypadku, wartość składnika wartość jest kopiowana z obiektu źródłowego do nowo utworzonego obiektu.
+
+Konstruktor kopiujący jest automatycznie wywoływany w różnych sytuacjach, takich jak:
+- przekazywanie obiektu przez wartość do funkcji
+- worzenie kopii obiektu za pomocą operatora przypisania (=)
+- tworzenie kopii obiektu jako składnika innego obiektu.
+
+Warto zauważyć, że od wersji C++11 wprowadzono specjalny konstruktor kopiujący, tzw. konstruktor przenoszący (move constructor), który jest używany w przypadku przenoszenia zasobów z jednego obiektu do drugiego, zamiast kopiowania.
+
+### Operator Przypisania
+Operator przypisania (operator=) w języku C++ jest specjalną funkcją składową klasy, która jest używana do przypisywania jednego obiektu innemu obiektowi tego samego typu. Operator przypisania pozwala na nadpisanie danych jednego obiektu danymi drugiego obiektu, zapewniając, że oba obiekty mają takie same wartości składników.
+
+Operator przypisania ma specyficzną składnię, która wygląda następująco:
+```c++
+NazwaKlasy& operator=(const NazwaKlasy& innyObiekt)
+```
+Gdzie NazwaKlasy to nazwa klasy, dla której definiujemy operator przypisania.
+
+Przykład definicji operatora przypisania dla klasy MojObiekt może wyglądać tak:
+```c++
+class MojObiekt {
+public:
+    int wartosc;
+
+    // Operator przypisania
+    MojObiekt& operator=(const MojObiekt& innyObiekt) {
+        if (this != &innyObiekt) {
+            wartosc = innyObiekt.wartosc;
+        }
+        return *this;
+    }
+};
+
+```
+W powyższym przykładzie operator przypisania operator= dla klasy MojObiekt przypisuje wartość składnika wartosc z jednego obiektu (innyObiekt) do drugiego obiektu (*this). Przed przypisaniem sprawdzane jest, czy oba obiekty nie są identyczne, aby uniknąć niepotrzebnego przypisania samemu sobie.
+
+
+Operator przypisania jest wywoływany, gdy używamy operatora przypisania (=) do przypisania jednego obiektu innemu obiektowi tego samego typu. Na przykład:
+```c++
+MojObiekt obiekt1;
+MojObiekt obiekt2;
+obiekt2 = obiekt1;  // Wywołanie operatora przypisania
+
+```
+Warto zauważyć, że jeśli nie zdefiniujemy własnego operatora przypisania dla klasy, kompilator dostarczy domyślną implementację operatora przypisania, która wykonuje przypisanie bitowe (bitwise assignment) dla wszystkich składników danych klasy.
+
+Operator przypisania jest często używany wraz z konstruktorem kopiującym (copy constructor), aby zapewnić poprawną semantykę kopiowania obiektów. Oba te mechanizmy są ważne w zarządzaniu dynamiczną pamięcią i unikaniu wycieków pamięci.
+
+### Konstruktor przenoszący
+Konstruktor przenoszący jest używany do tworzenia nowego obiektu na podstawie innego obiektu, przenosząc zasoby z tego obiektu do nowego obiektu. Konstruktor przenoszący jest oznaczony przez operator && po nazwie typu.
+
+Przykład definicji konstruktora przenoszącego dla klasy MojObiekt może wyglądać tak:
+```c++
+class MojObiekt {
+public:
+    int* dane;
+
+    // Konstruktor przenoszący
+    MojObiekt(MojObiekt&& innyObiekt) noexcept {
+        dane = innyObiekt.dane;
+        innyObiekt.dane = nullptr;
+    }
+};
+
+```
+W powyższym przykładzie, konstruktor przenoszący MojObiekt(MojObiekt&& innyObiekt) przenosi wskaźnik dane z obiektu innyObiekt do nowego obiektu MojObiekt.
+
+### Przenoszący operator przypisania
+Przenoszący operator przypisania jest używany do przypisania zasobów z jednego obiektu do innego obiektu, zamiast kopiowania danych. Przenoszący operator przypisania jest oznaczony przez operator && po nazwie typu.
+
+Przykład definicji przenoszącego operatora przypisania dla klasy MojObiekt może wyglądać tak:
+```c++
+class MojObiekt {
+public:
+    int* dane;
+
+    // Przenoszący operator przypisania
+    MojObiekt& operator=(MojObiekt&& innyObiekt) noexcept {
+        if (this != &innyObiekt) {
+            delete dane;
+            dane = innyObiekt.dane;
+            innyObiekt.dane = nullptr;
+        }
+        return *this;
+    }
+};
+
+```
+W powyższym przykładzie, przenoszący operator przypisania operator=(MojObiekt&& innyObiekt) przenosi wskaźnik dane z obiektu innyObiekt do obiektu *this, jednocześnie zwalniając zasoby obiektu *this, jeśli istnieją.
+
+---
+Konstruktory przenoszące i przenoszące operatory przypisania są szczególnie przydatne, gdy mamy do czynienia z obiektami, które posiadają zasoby, takie jak dynamicznie zaalokowana pamięć. Przenoszenie zasobów zamiast kopiowania może znacznie zwiększyć wydajność programu i uniknąć niepotrzebnego duplikowania danych.
+
+Warto zauważyć, że jeśli nie zdefiniujemy własnego konstruktora przenoszącego lub przenoszącego operatora przypisania, kompilator dostarczy domyślne implementacje, które wykonują operacje kopiowania. Jednak w przypadku posiadania zasobów wymagających zarządzania, warto samodzielnie zdefiniować te funkcje, aby zapewnić odpowiednie przenoszenie zasobów i zarządzanie nimi.
+
+### Inteligentne wskaźniki
+Inteligentne wskaźniki w języku C++ to specjalne typy wskaźników, które zapewniają automatyczne zarządzanie pamięcią, w celu uniknięcia wycieków pamięci i błędów związanych z niepoprawnym zwalnianiem pamięci. 
+
+nteligentne wskaźniki automatycznie zarządzają cyklem życia obiektów, a ich używanie przyczynia się do bezpiecznego i efektywnego programowania.
+
+W języku C++ są dostępne trzy główne rodzaje inteligentnych wskaźników:
+
+- std::unique_ptr:
+
+reprezentuje unikalny (jednoznaczny) wskaźnik na obiekt i zarządza automatycznie pamięcią obiektu. Może przechowywać wyłączne (jednoznaczne) własności obiektu i nie może być skopiowany ani przypisany do innego std::unique_ptr. Gdy std::unique_ptr wychodzi poza zakres, automatycznie zwalnia pamięć obiektu, do którego odnosi się wskaźnik.
+
+Przykład użycia std::unique_ptr:
+```c++
+#include <memory>
+
+int main() {
+    std::unique_ptr<int> ptr(new int(5));
+    // Korzystanie z ptr
+    *ptr = 10;
+    // ...
+
+    // Automatyczne zwalnianie pamięci przy opuszczeniu zakresu
+
+    return 0;
+}
+
+```
+- std::shared_ptr:
+  reprezentuje wskaźnik na obiekt, który może być współdzielony przez wiele std::shared_ptr. Zarządza licznikiem odwołań, który śledzi liczbę wskaźników wskazujących na ten sam obiekt. Gdy licznik odwołań osiągnie zero, obiekt zostaje automatycznie zwolniony. std::shared_ptr umożliwia bezpieczne współdzielenie zasobów między różnymi częściami kodu.
+
+Przykład użycia std::shared_ptr:
+```c++
+#include <memory>
+
+int main() {
+    std::shared_ptr<int> ptr1 = std::make_shared<int>(5);
+    std::shared_ptr<int> ptr2 = ptr1;
+    // Obiekt jest współdzielony przez ptr1 i ptr2
+
+    // Korzystanie z ptr1 i ptr2
+    *
+
+```
+- std::weak_ptr:
+  jest podobny do std::shared_ptr, ale nie zwiększa licznika odwołań. std::weak_ptr może być używany do śledzenia obiektu, którego właścicielem jest std::shared_ptr, bez zwiększania licznika odwołań. Pozwala to uniknąć cyklicznych zależności między obiektami, które mogą prowadzić do wycieków pamięci.
+
