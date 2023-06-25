@@ -618,3 +618,41 @@ class Interface{
     // to staję się klasą abstrakcyjną
 };
 ```
+
+# STL
+## Podstawowe komponety STL
+- kontenery
+- iteratory
+- algorytmy
+## Kontenery
+1. Kontenery sekwencyjne - jakies elementy znajdują się od innych w określonej odległości
+2. Kontenery niesekwencyjne
+3. Adaptery kontenerów - wykorzystują istniejące kontenery i modyfikują je do określonych celów
+### Kontenery sekwencyjne
+1. std::vector
+2. std::deque
+3. std::list
+#### std::vector
+- Elementy są umieszczone w pamięci dokladnie tak samo jak w tablicy (ciągle obok siebie)          
+- Dostęp do elementu ```vec[i]``` jest operacją o złożoności O(1)
+- Modyfikacja wekotra (wstawiania/kasowanie elemetów) - O(n)
+- Wyjątek dla ostatniego elementu ma złożoność =O(1)
+#### std::deque
+- Elementy nie są umieszczone w sposób ciągły          
+- Dostęp do elementu ```vec[i]``` jest operacją o złożoności O(1)                 
+- Modyfikacja wekotra (wstawiania/kasowanie elemetów) - O(n)              
+- Wyjątek dla ostatniego lub pierwszego elementu ma złożoność =O(1)
+#### std::list
+- Elementy są umieszczone losowo w pamięci 
+- Dostęp do elementu ```lst[i]``` jest operacją o złożoności O(n)
+- łatwo dodać lub usunąć element w każdym miejscu - O(1) (ale...jeśli mamy wskaźnik/iterator na konkretne miejsce w liście!)
+- 
+
+##### Złożoność
+- O(1) - czas działania nie zależy od rozmiaru problemu
+- O(n) - czas działania jest liniowo zależny od rozmiaru problemu
+- O(n^2)
+- O(n^3) ...
+- O(ln n)
+- O(n*ln n)
+- O(2^n)
