@@ -374,3 +374,55 @@ foo(s);
 // wywołamy metodę z klasy bazowej dla osoby i studenta
 // Uwaga - nie użyjemy nadpisanej funkcji przez klase studnet
 ```
+## Wskaźnik i klse Bazowna - Sztos opcja
+```c++
+//jeśli stworzymy wskaźnik na klase bazowną i przekarzemy sobie do niego adres klasy pochodnej 
+// to dzieją się interesujące rzeczy
+
+void foo(Osoba *o){
+    o->info();
+}
+.
+.
+.
+foo(&osoba);
+
+foo(&studnet);
+```
+- co dostaniemy? W tym wypadku wywoła się metoda info dla klasy bazowej (jeśli założymy że klasa została napisana tak jak wyżej)
+- To dlaczego jest to sztos opcja? Odpowiedz ukrywa się w słowie wirtual:
+```c++
+//zmodyfikujmy klase bazową i klase pochodną 
+
+class Osoba{
+std::string imie;
+public:
+explicit Osoba(const std::string &im)
+virtual void info() const; // dodajemy słowo virtual, które mówi kompilatorowi
+                          // że ma zwrócić uwagę na tą funkcje przy innych operacjach - tak w skrócie
+                          // dokładniej -> zmieniamy opcje patrzenia na wskaźnik kompilatora jako wywołanie metody
+                          // nie z typu wskaźnika a z typu obiektu na jaki wskazuje
+};
+
+class Student: public Osoba{
+int indeks;
+
+public:
+
+void info() const override; // utwierdzamy kompilator, że chcemy nadpisać funkcje virualną
+
+};
+```
+- Co otrzymamy po ponownym wywołaniu foo()?
+```c++
+void foo(Osoba *o){
+    o->info(); // teraz wywoła się metoda dla obiektu który jest wskazywany przez wskaźnik
+}
+.
+.
+.
+foo(&osoba); // czyli tutaj wywoła się info z klasy osoba bo wskazuje na osobe
+
+foo(&studnet) // a tutaj wywoła sie info z klasy pochodnej student, bo wskazuje na studenta;
+- ```
+- override zabezpiecza nas też przed pomyłkami(np. literówki w funkcji którą chcemu nadpisać)

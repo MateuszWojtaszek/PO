@@ -3,4 +3,4 @@ project(PO)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_executable(PO main.cpp)
+add_executable(PO main.cpp Unit.cpp Unit.h)
