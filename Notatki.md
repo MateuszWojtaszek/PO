@@ -736,6 +736,45 @@ std::vector<Student> v{{"Adam",123456},{"Wojtek",432132}};
 std::sort(begin(v),end(v),
           [](const Student &s1, const Studnet &s2){return s1.index<s2.index})
 ```
+## Obsługa błędów
+- Język c++ proponuje mechanizm wyjątków.
 
+rozdzielono to na 2 zagadnienia: 
+- Zgłaszanie błędów - realizuje sie to przez rzucenie wyjątku -> throw wartość(zmienna, cokolwiek) np.: std::exepction();
+- przechwytywanie oraz  obsługę błędów -> realizuje się to przez 2 bloki instrukcji: try i catch
 
+kod który może zgłosić wyjątek umieszczamy w bloku try i bezpośrednio po tym bloku umieszczamy conajmniej 1 blok catch
+```c++
+void foo(){
+    //cos
+    throw FileOpenError(plik.jpg); // po rzuceniu wyjatku szukamy bloku catch
+}
+try
+{
+    foo();
+    .
+    .
+    .
+}
+//typ zgłoszonego wyjątku - zazwyczaj przez const referencje
+catch(const FileOpenError &e)
+    
+    // jeśli zgłosimy wyjątek a nasza funkcja nie znajduje się w bloku try to domyślnie 
+    // zostanie wywołana funkcja terminate
+    // terminate wywola sie tez jesli funkcja rzuci wyjatkiem w bloku try ale 
+    // nie mamy pasujacego bloku catch
+    
+    
+catch(...) // łapie wszystko i musi byc na końcu
+```
+Sytuacje specjalne:
+- wyjątek w konstruktorze obiektu:
+z punktu widzenia kompilatora obiek nie został utworzony i nie zostanie wywołany jego destruktor, trzeba go zlapac w konstruktorze i go złapać aby nie mieć wycieku pamięci
+- wyjątek w destruktorze:
+jeśli taki wyjątek zostanie zgłoszony w trakcje zgloszenia innego wyjątku to zostanie wywolana funkcja terminate -> nie mozna miec 2 wyjątków na raz
 
+### Detale
+- mozna zasygnalizować, że funkcja napewno nie zgłosi wyjątu dalej, jesli to zrobi to wywołuje się terminate
+```c++
+void foo() noexcept;  
+```
