@@ -681,7 +681,61 @@ Aby korzystać trzeba załączyć derektywy
 Algorytmy nie modyfikujące kontenera:
 
 std::all_of() -> czy wszystkie elementy kolekcji spełniają warunek
+```c++
+//bool all_of(Input first, Input last, UnaryPredicate p)
+// iterator na pierwszy element, na ostatni, i ???
+//Predicate - "pytanie" na które można odp. tak lub nie
+// UnrayPredycate - predykat operujący na 1 wartości
+//przykład zastosowania:
+std::list v ={2,3,4,5,3};
+bool Czy_podzielne_przez_2(int value){
+    if(value%2==0) return true;
+    return false;
+}
+all_of(begin(v),end(v),Czy_podzielne_przez_2);
+```
+W miejcu funkcji można również wstawić obiekt klasy ze zdefiniowanym operatorem(). Inaczej nazywany obiektem funkcyjnym
+#### LAMBDA EXPRESSION - funkcja anonimowa
+```c++
+[x] (int value)->bool {return value<x}
+// []- takjaby start definicji, i można tu przekazać dla funkcji dla &-wszystko przez referencje, = -> wszystko przez wartość
+// (przyjmowane parametry)->wynik operacji 
+// {kod który wykonuje przekształcenie (operacje) }
+```
 
 std::any_of() -> czy w kolekcji cokolwiek spełnia warunek
 
 std::none_of() -> czy żaden element kolekcji nie spełnia warunku
+
+reszta z tej podgrupy działa podobnie.
+
+std::count() -> sprawdza ile razy cos występuje w kolekjci
+
+std::count_if() -> sprawdza ile jest czegos pod jakims warunkiem
+
+std::find() -> na jakiej pozycji jest pierwszy podany element
+
+std::find_if() -> na jakiej pozycji jest pierwszy element spełniający warunek to zwraca iterator!!
+
+------
+Algorytmy  modyfikujące kontener:
+
+std::sort() -> sortuje 
+```c++
+std::sort(begin(v), end(v));
+std::sort(begin(v), end(v), std::greater<int>()) //-> sortuje odwrotnie : od najwiekszego 
+```
+Fajna sztuczka dla wlasnego typu danych
+```c++
+struct Student{
+    int indeks;
+    string imię;
+};
+
+std::vector<Student> v{{"Adam",123456},{"Wojtek",432132}};
+std::sort(begin(v),end(v),
+          [](const Student &s1, const Studnet &s2){return s1.index<s2.index})
+```
+
+
+

@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <list>
 class Interface{
     // nie ma żadnych danych !
 
@@ -16,5 +16,5 @@ class Interface{
 
 
 int main(){
-
+std::list v{1,2,4,5};
 }
