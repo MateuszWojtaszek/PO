@@ -426,3 +426,195 @@ foo(&osoba); // czyli tutaj wywoła się info z klasy osoba bo wskazuje na osobe
 foo(&studnet) // a tutaj wywoła sie info z klasy pochodnej student, bo wskazuje na studenta;
 - ```
 - override zabezpiecza nas też przed pomyłkami(np. literówki w funkcji którą chcemu nadpisać)
+### ciekawostka z wykładu - mutable
+```c++
+// jeśli mamy w klasie zmienną którą z jakiegoś dziwnego powodu chcemy zmodyfikować w funkcji const
+// to możemu przy delkaracji zmiennej dodać słowo mutalble
+mutable int cooldown ;
+```
+
+## "Koszty" Funkcji Virtualnych
+
+ Koszty stałe:
+- Zostanie utworzona tablica która będzie zawierać adresy każdej funkcji virtualnej w klasie - koszt pomijalnie mały.
+- jeśli mamy klase w której znajduje się conajmniej jedną klase virtualną to obiek tego typu zostanie automatycznie powiększony o jeden doatkowy wskaźnik - zwiększa się znacząco rozmiar naszego obiektu -> też rzadko się tym przyjmujemy
+- ten wskaźnik wskazuje na tablice z adresami funkcji virtualnych
+- Koszt 3 wiąże się z wywołaniem funkcji wirtualnej. Wykonujemy jeden dodatkowy odczyt z pamięci
+
+# Dziedziczenie wielu klas
+
+- W c++ możemy dziedziczyć  wiele klas na raz. Dostajemy wtedy wszystko z obydwu klas. Problem poajawia się jeśli klasy te ma ją te same zmienne bądź funkcje o tych samych nazwach.
+- Należy wtedy wybrać do jakiej zmiennej chcemy się odwołać
+```c++
+// pierwsza prymitywna klasa
+  class A{
+  protected:
+  int val;
+  public:
+  A();
+  };
+
+A::A() {
+val=1;
+}
+// druga prymitywna klasa
+class B{
+protected:
+int val;
+public:
+B();
+};
+
+B::B() {
+val=2;
+
+}
+// klasa dziedziczaca 2 klasy, (konstruktory wywołują się w kolejności podanego dziedziczenia)
+// czyli najpierw konstruktor A potem B na końcu C
+class C:public A,public B{
+public:
+C();
+[[nodiscard]] int get_val() const;
+};
+
+C::C() = default;
+
+int C::get_val() const {
+return A::val; // definiujemy jaką zmienną z dziedziczonych klas zwraca funkcja
+}
+```
+# PROBLEM DIAMENTU
+
+Wyobraźmy sobie że mamy klase bazową A, następnie dwie klasy pochodne od A -> B1 oraz B2. Po tym wszystkim tworzymy klase C która jednoczśnie dziedziczy klase B1 oraz klase B2.
+Jaki mamy problem? A minaowicie taki, że wszystko zmienne klasy bazowej A się dupliukją w klase C i musimy z tą duplikacją walczyć.
+- 1 sposobem jest ręcznę wybieranie z której "ścieżki" dziedziczenia korzystamy
+
+przykładowo:
+```c++
+class A{
+protected:
+    int val;
+public:
+    A();
+};
+
+A::A() {
+val=0;
+}
+
+class B1:public A{
+};
+
+class B2:public A{
+public:
+    B2();
+};
+
+class C:public B1,public B2{
+public:
+    int get_val();
+};
+
+int C::get_val() {
+    return B1::val; // ręcznie wskazujemy "ścieżkę" dziedziczenia
+}
+```
+- 2 sposobem jest określenie we weczśniejszych klasach dziedziczenia virtulanego, które powoduję, że pole które się duplikuję się uwspólnia
+
+przykład:
+```c++
+class A{
+protected:
+    int val;
+public:
+    A();
+};
+
+A::A() {
+val=0;
+}
+
+class B1:public virtual A{ // dziedziczenie virtualne
+};
+
+class B2:public virtual A{ // dziedziczenie virtualne
+public:
+    B2();
+};
+
+class C:public B1,public B2{
+public:
+    int get_val();
+};
+
+int C::get_val() {
+    return val; // brak probelmu z wartością 
+}
+```
+- Pojawia się niestety mały problem jeśli posiadamy konstruktor kalsy A który przyjmuje jakieś argumenty. Występuje wtedy bląd podczas tworzenia obiektu C. Powiedzmy, że stworzyliśmy konstryktory dla klas B1 i B2 które inicjalizują Konstruktor klasy bazowej A. To przy tworzeniu obiketu C pojawia się problem, kompilator nie wie, jaką wartość ma uwspólnić. Dlatego musimy zdefiniować konstruktor klasy C i zdefiniować wywołanie konstruktora dla Klasy A, wtedy wartość zostaję uwspólniona i konstruktor A nie wywołuję się już dla klas B1 oraz B2.
+
+przykład:
+```c++
+class A{
+protected:
+    int val;
+public:
+    A(int v);
+};
+
+A::A(int v):val(v) {
+}
+
+class B1:public virtual A{
+public:
+    B1();
+};
+
+B1::B1():A{1} { wywołanie A{1} sie nie wykona dla tworzenia obietu klasy C
+
+}
+
+class B2:public virtual A{
+public:
+    B2();
+};
+
+B2::B2():A{2} { // wywołanie A{2} sie nie wykona dla tworzenia obietu klasy C
+
+}
+
+class C:public B1,public B2{
+public:
+    int get_val();
+    C();
+};
+
+int C::get_val() {
+    return val;
+}
+
+C::C(): A(10) { // nie bedzie blędu, wartość val zostaje uwspolniona w tym miejscu
+
+}
+```
+### Kiedy Dziedziczenie wieloklasowe nie powoduje konfliktów?
+Kiedy klasy z których dziedziczymy spełniają specyficzne warunki:
+- nie posiadają żadnych danych oraz pól
+- nie posiadają żadnych zdefiniowanych funckji 
+- Te klasy nazywają się w innych jezykach nazywa się interfejsem
+
+przykład:
+```c++
+// nie można stworzyć obiektu klasy abstrakcyjnej!!!
+class Interface{
+    // nie ma żadnych danych !
+
+    // nie ma definicji funkcji, tylko deklaracej
+
+    virtual void initialize_device() = 0; // funkcja czysto wirtualna
+    // ten zapis oznacza, że funkcja nie posiada definicji w klasie w której się znajduje
+
+    // jeśli klasa zawiera choćby jedną funkcje czysto wirtualną
+    // to staję się klasą abstrakcyjną
+};
+```
